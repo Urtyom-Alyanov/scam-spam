@@ -139,14 +139,14 @@ const bootstrap = async () => {
           owner_id: wall.ownerId,
           post_id: wall.id,
         });
-        papochkaVk.api.groups.ban({
-          group_id: Math.abs(wall.ownerId),
-          comment: "ВАС ЗАМЕТИЛИ",
-          comment_visible: 1,
-          reason: 1,
-          end_date: getBanEnd(),
-          owner_id: wall.authorId,
-        });
+        // papochkaVk.api.groups.ban({
+        //   group_id: Math.abs(wall.ownerId),
+        //   comment: "ВАС ЗАМЕТИЛИ",
+        //   comment_visible: 1,
+        //   reason: 1,
+        //   end_date: getBanEnd(),
+        //   owner_id: wall.authorId,
+        // });
       }
     })
     .on(
@@ -201,15 +201,15 @@ const bootstrap = async () => {
             comment_id: id,
             owner_id: ownerId,
           });
-        if (iel)
-          papochkaVk.api.groups.ban({
-            group_id: Math.abs(ownerId),
-            comment: "ВАС ЗАМЕТИЛИ",
-            comment_visible: 1,
-            reason: 1,
-            end_date: getBanEnd(),
-            owner_id: fromId,
-          });
+        // if (iel)
+        //   papochkaVk.api.groups.ban({
+        //     group_id: Math.abs(ownerId),
+        //     comment: "ВАС ЗАМЕТИЛИ",
+        //     comment_visible: 1,
+        //     reason: 1,
+        //     end_date: getBanEnd(),
+        //     owner_id: fromId,
+        //   });
       }
     );
 
