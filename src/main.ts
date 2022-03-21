@@ -11,8 +11,6 @@ import {
 } from "./handlers";
 import { ScamModeRepositoryCreator } from "./repository";
 
-const papochka_token = process.env.PAPA_TOKEN;
-
 const eventEmmiter = (
   updates: Updates,
   api: API,
@@ -50,12 +48,11 @@ const bootstrap = async () => {
   const repo = ScamModeRepositoryCreator.getSettingsRepo(conn);
 
   const app = express();
-  const papochkaVk = new VK({ token: papochka_token });
+  const papochkaVk = new VK({ token: process.env.PAPA_TOKEN });
+
   getVkFromEnv().forEach(({ vk, c }) => {
     const { updates, api } = vk;
-
     eventEmmiter(updates, api, repo, papochkaVk);
-
     app.post("/listening/" + c.name, updates.getWebhookCallback());
   });
 
