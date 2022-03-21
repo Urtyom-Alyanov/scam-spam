@@ -9,6 +9,7 @@ import { Settings } from "../settings.entity";
 import { getManagers } from "../utils/getManagers";
 import { getVkFromEnv } from "../utils/getVkFromEnv";
 import { IEventHandler } from "./handler.interface";
+import { sendMessage } from "../utils/sendMessage";
 
 export class MessagesNewHandler
   implements IEventHandler<MessageContext<ContextDefaultState>>
@@ -36,15 +37,15 @@ export class MessagesNewHandler
       });
 
       managersBezId.forEach(async (id) =>
-        vk.api.messages.send({
-          peer_id: id,
-          message: `SCAM SPAM переключен на ${
+        sendMessage(
+          vk.api,
+          id,
+          `SCAM SPAM переключен на ${
             (await getScamMode(this.repo)) ? "БАЗА" : "КРИНЖ"
           }. Инициатор - ${user.first_name} ${
             user.last_name
-          } из региона [club${groupId}|${groupConnInfo.name}]`,
-          random_id: getRandomId(),
-        })
+          } из региона [club${groupId}|${groupConnInfo.name}]`
+        )
       );
     });
   }
@@ -62,41 +63,31 @@ export class MessagesNewHandler
 
   private async turnScam(peerId: number) {
     await turnScamMode(this.repo);
-    this.api.messages.send({
-      peer_id: peerId,
-      message: `SCAM SPAM переключен на ${
+    sendMessage(
+      this.api,
+      peerId,
+      `SCAM SPAM переключен на ${
         (await getScamMode(this.repo)) ? "БАЗА" : "КРИНЖ"
-      }`,
-      random_id: getRandomId(),
-    });
+      }`
+    );
   }
 
   private async setScamCringe(peerId: number) {
     await setScamMode(this.repo, false);
-    this.api.messages.send({
-      peer_id: peerId,
-      message: "Выключен SCAM SPAM режим (КРИНЖ)",
-      random_id: getRandomId(),
-    });
+    sendMessage(this.api, peerId, "Выключен SCAM SPAM режим (КРИНЖ)");
   }
 
   private async setScamBased(peerId: number) {
     await setScamMode(this.repo, true);
-    this.api.messages.send({
-      peer_id: peerId,
-      message: "Включен SCAM SPAM режим (БАЗА)",
-      random_id: getRandomId(),
-    });
+    sendMessage(this.api, peerId, "Включен SCAM SPAM режим (БАЗА)");
   }
 
   private async getScam(peerId: number) {
-    this.api.messages.send({
-      peer_id: peerId,
-      message: `SCAM SPAM: ${
-        (await getScamMode(this.repo)) ? "БАЗА" : "КРИНЖ"
-      }`,
-      random_id: getRandomId(),
-    });
+    sendMessage(
+      this.api,
+      peerId,
+      `SCAM SPAM: ${(await getScamMode(this.repo)) ? "БАЗА" : "КРИНЖ"}`
+    );
   }
 
   readonly run: AllowArray<Middleware<MessageContext<ContextDefaultState>>> =
