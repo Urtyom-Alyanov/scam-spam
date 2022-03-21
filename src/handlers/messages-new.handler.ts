@@ -7,10 +7,10 @@ import { setScamMode } from "../repository/scam/setScamMode";
 import { turnScamMode } from "../repository/scam/turnScamMode";
 import { Settings } from "../settings.entity";
 import { getManagers } from "../utils/getManagers";
-import { EventHandler } from "./handler.interface";
+import { IEventHandler } from "./handler.interface";
 
 export class MessagesNewHandler
-  implements EventHandler<MessageContext<ContextDefaultState>>
+  implements IEventHandler<MessageContext<ContextDefaultState>>
 {
   constructor(private api: API, private repo: Repository<Settings>) {}
 
