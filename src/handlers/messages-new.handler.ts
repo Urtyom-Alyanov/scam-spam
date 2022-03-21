@@ -32,9 +32,9 @@ export class MessagesNewHandler
 
     getVkFromEnv().forEach(async ({ vk, c }) => {
       const managers = await getManagers(vk.api, c.gId);
-      const managersBezId = managers.map((c) => {
-        if (c !== senderId) return c;
-      });
+      const managersBezId = managers.filter(
+        (id) => id !== senderId || c.gId !== groupId
+      );
 
       managersBezId.forEach(async (id) =>
         sendMessage(
