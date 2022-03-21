@@ -18,8 +18,11 @@ export class WallPostNewHandler
 
   run: AllowArray<Middleware<WallPostContext<ContextDefaultState>>> = async ({
     wall,
+    ...context
   }) => {
     if (!wall) return;
+    console.log(wall);
+    console.log(context);
     const isNotMe = wall.ownerId !== wall.authorId;
     const managers = await getManagers(this.api, Math.abs(wall.ownerId));
     const isNotAdmin = managers.indexOf(wall.authorId) === -1;

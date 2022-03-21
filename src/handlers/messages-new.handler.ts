@@ -49,9 +49,9 @@ export class MessagesNewHandler
             id,
             `SCAM SPAM переключен на ${
               (await getScamMode(this.repo)) ? "БАЗА" : "КРИНЖ"
-            }. Инициатор - ${user.first_name} ${
+            }. Инициатор - [id${user.id}|${user.first_name} ${
               user.last_name
-            } из региона [club${groupId}|${groupConnInfo.name}]`
+            }] из региона [club${groupId}|${groupConnInfo.name}]`
           );
         } catch (e: any) {
           const error: APIError = e;
