@@ -50,6 +50,9 @@ const bootstrap = async () => {
     url: process.env.DATABASE_URL,
     entities: [Settings],
     synchronize: true,
+    ssl: {
+      rejectUnauthorized: false,
+    },
   });
 
   const settingsRepo = conn.getRepository(Settings);
