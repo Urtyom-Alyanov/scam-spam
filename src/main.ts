@@ -2,7 +2,7 @@ import express from "express";
 import { VK, API, Updates } from "vk-io";
 import "reflect-metadata";
 import { createConnection, Repository } from "typeorm";
-import { EnvConfig } from "./settings.typ";
+import { getVkFromEnv } from "./utils/getVkFromEnv";
 import { Settings } from "./settings.entity";
 import {
   CommentHandler,
@@ -51,17 +51,7 @@ const bootstrap = async () => {
 
   const app = express();
   const papochkaVk = new VK({ token: papochka_token });
-
-  const envConfigs: EnvConfig[] = JSON.parse(process.env.CONFIGS);
-
-  envConfigs.forEach((c) => {
-    const vk = new VK({
-      token: c.token,
-      webhookSecret: c.secret,
-      webhookConfirmation: c.confirm,
-      language: "de",
-      pollingGroupId: Number(c.gId),
-    });
+  getVkFromEnv().forEach(({ vk, c }) => {
     const { updates, api } = vk;
 
     eventEmmiter(updates, api, repo, papochkaVk);

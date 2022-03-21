@@ -7,12 +7,54 @@ import { setScamMode } from "../repository/scam/setScamMode";
 import { turnScamMode } from "../repository/scam/turnScamMode";
 import { Settings } from "../settings.entity";
 import { getManagers } from "../utils/getManagers";
+import { getVkFromEnv } from "../utils/getVkFromEnv";
 import { IEventHandler } from "./handler.interface";
 
 export class MessagesNewHandler
   implements IEventHandler<MessageContext<ContextDefaultState>>
 {
   constructor(private api: API, private repo: Repository<Settings>) {}
+
+  private async notifyMembers(senderId: number, groupId: number) {
+    const resp = await this.api.users.get({ user_ids: [senderId] });
+    const user: {
+      id: number;
+      first_name: string;
+      last_name: string;
+      can_access_closed: boolean;
+      is_closed: boolean;
+    } = resp[0];
+
+    getVkFromEnv().forEach(async ({ vk, c }) => {
+      const managers = await getManagers(vk.api, groupId);
+      const managersBezId = managers.map((c) => {
+        if (c !== senderId) return c;
+      });
+
+      managersBezId.forEach(async (id) =>
+        vk.api.messages.send({
+          peer_id: id,
+          message: `SCAM SPAM переключен на ${
+            (await getScamMode(this.repo)) ? "БАЗА" : "КРИНЖ"
+          }. Инициатор - ${user.first_name} ${user.last_name} из региона [club${
+            c.gId
+          }|${c.name}]`,
+          random_id: getRandomId(),
+        })
+      );
+    });
+  }
+
+  private async getRegions(peerId: number) {
+    const regs = getVkFromEnv().map(({ c }) => `[club${c.gId}|${c.name}]`);
+    const string = regs.join("\n");
+
+    this.api.messages.send({
+      peer_id: peerId,
+      random_id: getRandomId(),
+      message: `SCAM SPAN работает в данных регионах: \n\n${string}`,
+    });
+  }
 
   private async turnScam(peerId: number) {
     await turnScamMode(this.repo);
@@ -61,18 +103,25 @@ export class MessagesNewHandler
       switch (text.toLowerCase()) {
         case "установить скам база":
           this.setScamBased(peerId);
+          this.notifyMembers(senderId, $groupId);
           break;
 
         case "установить скам кринж":
           this.setScamCringe(peerId);
+          this.notifyMembers(senderId, $groupId);
           break;
 
         case "переключить скам":
           this.turnScam(peerId);
+          this.notifyMembers(senderId, $groupId);
           break;
 
         case "получить скам":
           this.getScam(peerId);
+          break;
+
+        case "регионы":
+          this.getRegions(peerId);
           break;
       }
     };
