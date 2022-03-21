@@ -44,7 +44,7 @@ export class MessagesNewHandler
 
       managersBezId.forEach(async (id) => {
         try {
-          sendMessage(
+          await sendMessage(
             vk.api,
             id,
             `SCAM SPAM переключен на ${
