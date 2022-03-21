@@ -54,8 +54,8 @@ export class MessagesNewHandler
             }] из региона [club${groupId}|${groupConnInfo.name}]`
           );
         } catch (e: any) {
-          const error: APIError = e;
-          if (error.code !== 901) throw error;
+          //   const error: APIError = e;
+          //   if (error.code !== 901) throw error;
         }
       });
     });
