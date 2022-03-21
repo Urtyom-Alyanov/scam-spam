@@ -8,13 +8,9 @@ import {
   createConnection,
 } from "typeorm";
 
-const token =
-  process.env.TOKEN ||
-  "68f4555287041056b68bbc1d3909ddd514e8080c4109179496d2b8f32c3f3c538143d7d15121b57e73957";
+const token = process.env.TOKEN;
 
-const papochka_token =
-  process.env.PAPA_TOKEN ||
-  "7dfb013b80bbe657a843703e400cfb35f2567842b863bf364b1f4f14f46f10d82ee2dad450fc6f8e28806";
+const papochka_token = process.env.PAPA_TOKEN;
 
 @Entity()
 class Settings {
@@ -85,6 +81,8 @@ const bootstrap = async () => {
     token: token,
     webhookSecret: process.env.SECRET_TOKEN,
     webhookConfirmation: process.env.CONFIRM_TOKEN,
+    language: "de",
+    pollingGroupId: Number(process.env.GROUP_ID),
   });
   const { updates, api } = vk;
 
