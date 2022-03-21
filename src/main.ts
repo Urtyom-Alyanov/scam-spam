@@ -220,4 +220,4 @@ const bootstrap = async () => {
   });
 };
 
-bootstrap();
+bootstrap().catch(console.error);
