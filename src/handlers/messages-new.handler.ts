@@ -26,7 +26,7 @@ export class MessagesNewHandler
     } = resp[0];
 
     getVkFromEnv().forEach(async ({ vk, c }) => {
-      const managers = await getManagers(vk.api, groupId);
+      const managers = await getManagers(vk.api, c.gId);
       const managersBezId = managers.map((c) => {
         if (c !== senderId) return c;
       });
