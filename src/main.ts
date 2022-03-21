@@ -87,8 +87,10 @@ const bootstrap = async () => {
   const { updates, api } = vk;
 
   updates
-    .on("message_new", async ({ text, peerId }) => {
-      if (!text) return;
+    .on("message_new", async ({ text, peerId, senderId, $groupId }) => {
+      if (peerId !== senderId || !$groupId || !text) return;
+      const managers = await getManagers(api, Math.abs($groupId));
+      if (managers.indexOf(senderId) === -1) return;
       switch (text.toLowerCase()) {
         case "установить скам база":
           await setScamMode(true);
