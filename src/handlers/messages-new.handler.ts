@@ -1,6 +1,12 @@
 import { Middleware } from "middleware-io";
 import { Repository } from "typeorm";
-import { API, ContextDefaultState, getRandomId, MessageContext } from "vk-io";
+import {
+  API,
+  ContextDefaultState,
+  getRandomId,
+  MessageContext,
+  APIError,
+} from "vk-io";
 import { AllowArray } from "vk-io/lib/types";
 import { getScamMode } from "../repository/scam/getScamMode";
 import { setScamMode } from "../repository/scam/setScamMode";
@@ -36,17 +42,22 @@ export class MessagesNewHandler
         (id) => id !== senderId || c.gId !== groupId
       );
 
-      managersBezId.forEach(async (id) =>
-        sendMessage(
-          vk.api,
-          id,
-          `SCAM SPAM переключен на ${
-            (await getScamMode(this.repo)) ? "БАЗА" : "КРИНЖ"
-          }. Инициатор - ${user.first_name} ${
-            user.last_name
-          } из региона [club${groupId}|${groupConnInfo.name}]`
-        )
-      );
+      managersBezId.forEach(async (id) => {
+        try {
+          sendMessage(
+            vk.api,
+            id,
+            `SCAM SPAM переключен на ${
+              (await getScamMode(this.repo)) ? "БАЗА" : "КРИНЖ"
+            }. Инициатор - ${user.first_name} ${
+              user.last_name
+            } из региона [club${groupId}|${groupConnInfo.name}]`
+          );
+        } catch (e: any) {
+          const error: APIError = e;
+          if (error.code !== 901) throw error;
+        }
+      });
     });
   }
 
