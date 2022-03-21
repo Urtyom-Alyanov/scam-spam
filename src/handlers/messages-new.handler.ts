@@ -25,6 +25,10 @@ export class MessagesNewHandler
       is_closed: boolean;
     } = resp[0];
 
+    const { c: groupConnInfo } = getVkFromEnv().filter(
+      ({ c }) => c.gId === groupId
+    )[0];
+
     getVkFromEnv().forEach(async ({ vk, c }) => {
       const managers = await getManagers(vk.api, c.gId);
       const managersBezId = managers.map((c) => {
@@ -36,9 +40,9 @@ export class MessagesNewHandler
           peer_id: id,
           message: `SCAM SPAM переключен на ${
             (await getScamMode(this.repo)) ? "БАЗА" : "КРИНЖ"
-          }. Инициатор - ${user.first_name} ${user.last_name} из региона [club${
-            c.gId
-          }|${c.name}]`,
+          }. Инициатор - ${user.first_name} ${
+            user.last_name
+          } из региона [club${groupId}|${groupConnInfo.name}]`,
           random_id: getRandomId(),
         })
       );
