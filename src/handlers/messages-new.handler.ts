@@ -1,12 +1,6 @@
 import { Middleware } from "middleware-io";
 import { Repository } from "typeorm";
-import {
-  API,
-  ContextDefaultState,
-  getRandomId,
-  MessageContext,
-  APIError,
-} from "vk-io";
+import { API, ContextDefaultState, getRandomId, MessageContext } from "vk-io";
 import { AllowArray } from "vk-io/lib/types";
 import { getScamMode } from "../repository/scam/getScamMode";
 import { setScamMode } from "../repository/scam/setScamMode";
@@ -16,6 +10,7 @@ import { getManagers } from "../utils/getManagers";
 import { getVkFromEnv } from "../utils/getVkFromEnv";
 import { IEventHandler } from "./handler.interface";
 import { sendMessage } from "../utils/sendMessage";
+import { getWBJ } from "../utils/getWBJ";
 
 export class MessagesNewHandler
   implements IEventHandler<MessageContext<ContextDefaultState>>
@@ -102,9 +97,19 @@ export class MessagesNewHandler
   }
 
   readonly run: AllowArray<Middleware<MessageContext<ContextDefaultState>>> =
-    async ({ text, peerId, senderId, $groupId }) => {
-      if (peerId !== senderId || !$groupId || !text) return;
+    async ({ text, peerId, senderId, $groupId, id }) => {
+      if (!$groupId || !text) return;
       const managers = await getManagers(this.api, Math.abs($groupId));
+      if (peerId !== senderId) {
+        const wbj: number[] = JSON.parse(getWBJ());
+        if (wbj.indexOf(senderId) === -1) return;
+        this.api.messages.delete({
+          peer_id: peerId,
+          delete_for_all: 1,
+          message_ids: [id],
+        });
+        return;
+      }
       if (managers.indexOf(senderId) === -1) return;
       switch (text.toLowerCase()) {
         case "установить скам база":
