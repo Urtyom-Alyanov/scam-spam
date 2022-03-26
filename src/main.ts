@@ -18,7 +18,7 @@ import { isUniqueGToken } from "./validators/isUniqueGToken";
 import {
   IsInvalidToken,
   IsInvalidTokenGroup,
-} from "./validators/IsInvalidToken";
+} from "./validators/isInvalidToken";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 dotenv.config();
