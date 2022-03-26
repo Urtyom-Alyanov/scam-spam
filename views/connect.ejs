@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Присоединиться | SSB</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="wrapper">
+            SCAM SPAM
+        </div>
+    </header>
+    <main class="wrapper">
+        <div class="block-page">
+            <h1 class="mt-0">Подключение «SCAM SPAM» бота</h1>
+            <p>SCAM SPAM бот - это антиспам-бот, который удаляет все комментарии и посты, пока он включен</p>
+            <p>SCAM SPAM бот - новейшая разработка ССРММ.</p>
+            <hr>
+            <h3>Форма</h3>
+            <form class="form" method="post">
+                <h5 class="mb-0">Токен пользователя<span class="red">*</span></h5>
+                <input name="token_user" required id="token_papochka" value="<%= values ? values.token_user : "" %>">
+                <% if (errors && errors.filter(val => val.param === "token_user")[0]) { %>
+                    <p class="red">
+                        <%= errors.filter(val => val.param === "token_user")[0].msg %>
+                    </p>
+                <% } %>
+                <p class="light mt-0">Получить можно <a target="_blank" href="https://oauth.vk.com/oauth/authorize?client_id=2685278&scope=140492255&redirect_uri=https://oauth.vk.com/blank.html&display=page&response_type=token&revoke=1&__q_hash=5b1e0d563a8d28f7c5bfa0db26886e24">здесь</a></p>
+                <p class="light">Он нужен что бы удалять комменты и записи, когда он включен</p>
+                <h5 class="mb-0">Токен сообщества<span class="red">*</span></h5>
+                <input name="token_group" required id="token" value="<%= values ? values.token_group : "" %>">
+                <% if (errors && errors.filter(val => val.param === "token_group")[0]) { %>
+                    <p class="red">
+                        <%= errors.filter(val => val.param === "token_group")[0].msg %>
+                    </p>
+                <% } %>
+                <p class="light">Он нужен что бы удалять комменты и записи, когда он включен</p>
+                <h5 class="mb-0">Имя<span class="red">*</span></h5>
+                <input name="name" required id="name" value="<%= values ? values.name : "" %>">
+                <% if (errors && errors.filter(val => val.param === "name")[0]) { %>
+                    <p class="red">
+                        <%= errors.filter(val => val.param === "name")[0].msg %>
+                    </p>
+                <% } %>
+                <p class="light">Он нужен что бы дать имя региону в боте</p>
+                <h5 class="mb-0">ID сообщества<span class="red">*</span></h5>
+                <input name="group_id" type="number" required id="gId" value="<%= values ? values.group_id : "" %>">
+                <% if (errors && errors.filter(val => val.param === "group_id")[0]) { %>
+                    <p class="red">
+                        <%= errors.filter(val => val.param === "group_id")[0].msg %>
+                    </p>
+                <% } %>
+                <p class="light">Он нужен для того, что бы подтвердить группу</p>
+                <h5 class="mb-0">Confirmation токен<span class="red">*</span></h5>
+                <input name="confirm" required id="confirm" value="<%= values ? values.confirm : "" %>">
+                <% if (errors && errors.filter(val => val.param === "confirm")[0]) { %>
+                    <p class="red">
+                        <%= errors.filter(val => val.param === "confirm")[0].msg %>
+                    </p>
+                <% } %>
+                <p class="light">Он нужен для того, что бы подтврдить то, что это тот самый сервер</p>
+                <h5 class="mb-0">Секретный ключ</h5>
+                <input name="secret" id="secret" value="<%= values ? values.secret : "" %>">
+                <% if (errors && errors.filter(val => val.param === "secret")[0]) { %>
+                    <p class="red">
+                        <%= errors.filter(val => val.param === "secret")[0].msg %>
+                    </p>
+                <% } %>
+                <p class="light">Напишите, если есть</p>
+                <button type="submit" class="btn btn-confirm">Отправить</button>
+                <p class="mb-0 light">Подключение автоматическое</p>
+            </form>
+        </div>
+    </main>
+    <script src="/static/js/index.js"></script>
+</body>
+</html>
