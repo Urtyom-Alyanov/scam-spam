@@ -13,7 +13,7 @@ dotenv.config();
 const PORT = Number(process.env.PORT) || 8080;
 
 const bootstrap = async () => {
-  const conn = await createConnection(ORMCONFIG);
+  const conn = await createConnection(ORMCONFIG); // Метод устаревший, знаю, но зато работает нормально в отличии от new DataSource(ORMCONFIG);
   const repo = ScamModeRepositoryCreator.getSettingsRepo(conn);
 
   const app = express();
