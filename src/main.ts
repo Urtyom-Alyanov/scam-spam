@@ -1,6 +1,6 @@
 import express from "express";
 import "reflect-metadata";
-import { DataSource } from "typeorm";
+import { createConnection } from "typeorm";
 import { ScamModeRepositoryCreator } from "./repository";
 import path from "path";
 import { ConnectController } from "./controllers/connectController";
@@ -13,7 +13,7 @@ dotenv.config();
 const PORT = Number(process.env.PORT) || 8080;
 
 const bootstrap = async () => {
-  const conn = new DataSource(ORMCONFIG);
+  const conn = await createConnection(ORMCONFIG);
   const repo = ScamModeRepositoryCreator.getSettingsRepo(conn);
 
   const app = express();
