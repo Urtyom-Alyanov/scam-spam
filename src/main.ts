@@ -51,7 +51,7 @@ const bootstrap = async () => {
   const conn = new DataSource({
     type: "postgres",
     url: process.env.DATABASE_URL,
-    entities: [Settings],
+    entities: [__dirname + "/../**/*.entity.{js,ts}"],
     synchronize: true,
     ssl: {
       rejectUnauthorized: false,
