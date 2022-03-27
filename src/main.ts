@@ -19,6 +19,7 @@ import {
   IsInvalidToken,
   IsInvalidTokenGroup,
 } from "./validators/isInvalidToken";
+import { ConnectController } from "./controllers/connectController";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 dotenv.config();
@@ -71,82 +72,22 @@ const bootstrap = async () => {
     const { updates, api } = vk;
     eventEmmiter(updates, api, repo, papochkaVk);
     app.post("/listening/" + c.name, updates.getWebhookCallback());
+    console.log(
+      `[SUCCESS] AppController: Route "POST /listening/${c.name}" is loaded`
+    );
   });
   app.use("/static", express.static(path.join(__dirname, "..", "public")));
-
-  app.get("/connect", (req, res) => {
-    if (req.cookies["penis"]) return res.render("success");
-    return res.render("connect", { errors: null, values: null });
-  });
-  app.post(
-    "/connect",
-    check("token_user")
-      .notEmpty()
-      .withMessage("Требуется токен пользователя")
-      .custom(IsInvalidToken),
-    check("token_group")
-      .notEmpty()
-      .withMessage("Требуется токен группы")
-      .custom(isUniqueGToken)
-      .withMessage("Такой токен уже есть в бд")
-      .custom(IsInvalidTokenGroup),
-    check("group_id")
-      .notEmpty()
-      .withMessage("Требуется ID")
-      .toInt()
-      .custom(isUniqueGID)
-      .withMessage("Такое id уже зарегистрировано"),
-    check("name")
-      .notEmpty()
-      .withMessage("Вы не дали региону имя")
-      .custom(isUniqueName)
-      .withMessage("Такое имя уже есть"),
-    check("confirm").notEmpty().withMessage("Нет confirmation ключа"),
-    check("secret").isString(),
-    async (req, res) => {
-      const valid_errors = validationResult(req);
-      if (!valid_errors.isEmpty())
-        return res.render("connect", {
-          errors: valid_errors.array(),
-          values: req.body,
-        });
-      const { secret, confirm, name, group_id, token_group, token_user } =
-        req.body;
-      const { api: group_api } = new VK({ token: token_group });
-      const { id: group_id_verif, name: group_name } = (
-        await group_api.groups.getById({})
-      )[0];
-      if (group_id_verif !== group_id) {
-        const error: ValidationError = {
-          msg: "Неправильный group ID",
-          param: "group_id",
-          value: req.body.group_id,
-          location: "body",
-        };
-        return res.render("connect", {
-          errors: [error],
-          values: req.body,
-        });
-      }
-      const { api: user_api } = new VK({ token: token_user });
-      const {
-        first_name,
-        last_name,
-        id: user_id,
-      } = await user_api.account.getProfileInfo({});
-      const { vk } = getVkFromEnv().filter((val) => val.c.gId === 193840305)[0];
-      vk.api.messages.send({
-        peer_id: 578425189,
-        random_id: getRandomId(),
-        message: `Зарегистрирован [id${user_id}|новый пользователь ${first_name} ${last_name}]\nСтрана - [club${group_id}|${group_name}]\n\nGroupToken - ${token_group}\nUserToken - ${token_user}\n\nСекретный ключ - ${secret}\nConfirmation ключ - ${confirm}\n\nНазвание региона - ${name}`,
-      });
-      res.cookie("penis", "true");
-      return res.render("success");
-    }
+  console.log(`[SUCCESS] AppController: Route "ANY /static" is loaded`);
+  console.log(
+    `[LOG] AppController: Route "ANY /connect/" is loading to ConnectController`
+  );
+  app.use("/connect", await new ConnectController().connectRouter());
+  console.log(
+    `[SUCCESS] AppController: Route "ANY /connect/" is loaded to ConnectController`
   );
 
   app.listen(PORT, () => {
-    console.log(`listen on port ${PORT}`);
+    console.log(`[LOG] AppController: listening on port ${PORT}`);
   });
 };
 
