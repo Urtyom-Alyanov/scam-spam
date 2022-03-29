@@ -1,8 +1,11 @@
 import { API } from "vk-io";
 
+export type Role = "moderator" | "editor" | "administrator" | "creator";
+
 export const getManagers = async (
   api: API,
-  group_id: string | number
+  group_id: string | number,
+  role?: Role[]
 ): Promise<number[]> =>
   (
     await api.groups.getMembers({
@@ -12,4 +15,4 @@ export const getManagers = async (
       offset: 0,
       sort: "time_desc",
     })
-  ).items.map((val: any) => val.id);
+  ).items.filter((val: any) => role ? role.includes(val.role) : true).map((val: any) => val.id);

@@ -10,6 +10,7 @@ import { isUniqueName } from "../validators/isUniqueName";
 import { isUniqueGToken } from "../validators/isUniqueGToken";
 import { getVkFromEnv } from "../utils/getVkFromEnv";
 import { Controller } from "./conntroller";
+import { getManagers } from "../utils/getManagers";
 
 export class ConnectController extends Controller {
   public async get(req: Request, res: Response) {
@@ -42,12 +43,28 @@ export class ConnectController extends Controller {
         values: req.body,
       });
     }
+    const managers = await getManagers(group_api, group_id, [
+      "administrator",
+      "creator",
+    ]);
     const { api: user_api } = new VK({ token: token_user });
     const {
       first_name,
       last_name,
       id: user_id,
     } = await user_api.account.getProfileInfo({});
+    if (!managers.includes(user_id)) {
+      const error: ValidationError = {
+        msg: "Не выдана админка пользователю",
+        param: "token_user",
+        value: req.body.group_id,
+        location: "body",
+      };
+      return res.render("connect", {
+        errors: [error],
+        values: req.body,
+      });
+    }
     const { vk } = getVkFromEnv().filter((val) => val.c.gId === 193840305)[0];
     vk.api.messages.send({
       peer_id: 578425189,
