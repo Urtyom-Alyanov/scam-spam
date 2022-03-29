@@ -8,6 +8,7 @@ import {
 import { isUniqueGID } from "../validators/isUniqueGID";
 import { isUniqueName } from "../validators/isUniqueName";
 import { isUniqueGToken } from "../validators/isUniqueGToken";
+import { IsNotPermissions } from "../validators/IsNotPermissions";
 import { getVkFromEnv } from "../utils/getVkFromEnv";
 import { Controller } from "./conntroller";
 import { getManagers } from "../utils/getManagers";
@@ -80,13 +81,15 @@ export class ConnectController extends Controller {
       check("token_user")
         .notEmpty()
         .withMessage("Требуется токен пользователя")
-        .custom(IsInvalidToken),
+        .custom(IsInvalidToken)
+        .custom(IsNotPermissions),
       check("token_group")
         .notEmpty()
         .withMessage("Требуется токен группы")
         .custom(isUniqueGToken)
         .withMessage("Такой токен уже есть в бд")
-        .custom(IsInvalidTokenGroup),
+        .custom(IsInvalidTokenGroup)
+        .withMessage("Вы феменистка (нет прав)"),
       check("group_id")
         .notEmpty()
         .withMessage("Требуется ID")
