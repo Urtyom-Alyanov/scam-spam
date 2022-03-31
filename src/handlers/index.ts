@@ -19,7 +19,6 @@ export const eventEmmiter = (
         "board_comment_new",
         "market_comment_new",
         "photo_comment_new",
-        "market_comment_new",
         "video_comment_new",
         "wall_reply_new",
       ],
