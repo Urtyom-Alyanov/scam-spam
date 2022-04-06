@@ -8,6 +8,7 @@ import { AntispamController } from "./controllers/antispamController";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import { ORMCONFIG } from "./ormconfig";
+import { getPapochkaVk } from "./utils/getPapochkaVk";
 dotenv.config();
 
 const PORT = Number(process.env.PORT) || 8080;
@@ -38,7 +39,10 @@ const bootstrap = async () => {
   console.log(
     `[LOG] AppController: Route "ANY /connect/" is loading to ConnectController`
   );
-  app.use("/connect", await new ConnectController().connectRouter());
+  app.use(
+    "/connect",
+    await new ConnectController(getPapochkaVk().vk).connectRouter()
+  );
   console.log(
     `[SUCCESS] AppController: Route "ANY /connect/" is loaded to ConnectController`
   );

