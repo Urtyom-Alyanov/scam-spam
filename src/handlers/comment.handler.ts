@@ -6,6 +6,7 @@ import { getScamMode } from "../repository/scam/getScamMode";
 import { Settings } from "../settings.entity";
 import { getManagers } from "../utils/getManagers";
 import { IEventHandler } from "./handler.interface";
+import { setTimeoutAsync } from "../utils/setTimeoutAsync";
 
 export class CommentHandler
   implements IEventHandler<CommentContext<ContextDefaultState>>
@@ -36,32 +37,34 @@ export class CommentHandler
     const isNotMe = ownerId !== fromId;
     const iel = isNotMe && (await getScamMode(this.repo)) && isNotAdmin;
     try {
-      if (isBoardComment && iel)
-        await this.papochkaVk.api.board.deleteComment({
-          comment_id: id,
-          group_id: Math.abs(ownerId),
-          topic_id: objectId,
-        });
-      if (isMarketComment && iel)
-        await this.papochkaVk.api.market.deleteComment({
-          comment_id: id,
-          owner_id: ownerId,
-        });
-      if (isVideoComment && iel)
-        await this.papochkaVk.api.video.deleteComment({
-          comment_id: id,
-          owner_id: ownerId,
-        });
-      if (isPhotoComment && iel)
-        await this.papochkaVk.api.photos.deleteComment({
-          comment_id: id,
-          owner_id: ownerId,
-        });
-      if (isWallComment && iel)
-        await this.papochkaVk.api.wall.deleteComment({
-          comment_id: id,
-          owner_id: ownerId,
-        });
+      await setTimeoutAsync(async () => {
+        if (isBoardComment && iel)
+          await this.papochkaVk.api.board.deleteComment({
+            comment_id: id,
+            group_id: Math.abs(ownerId),
+            topic_id: objectId,
+          });
+        if (isMarketComment && iel)
+          await this.papochkaVk.api.market.deleteComment({
+            comment_id: id,
+            owner_id: ownerId,
+          });
+        if (isVideoComment && iel)
+          await this.papochkaVk.api.video.deleteComment({
+            comment_id: id,
+            owner_id: ownerId,
+          });
+        if (isPhotoComment && iel)
+          await this.papochkaVk.api.photos.deleteComment({
+            comment_id: id,
+            owner_id: ownerId,
+          });
+        if (isWallComment && iel)
+          await this.papochkaVk.api.wall.deleteComment({
+            comment_id: id,
+            owner_id: ownerId,
+          });
+      }, 2000);
     } catch (e: any) {
       const error: APIError = e;
       if (error.code === 7) return;

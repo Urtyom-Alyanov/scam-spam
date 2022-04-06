@@ -5,6 +5,7 @@ import { AllowArray } from "vk-io/lib/types";
 import { getScamMode } from "../repository/scam/getScamMode";
 import { Settings } from "../settings.entity";
 import { getManagers } from "../utils/getManagers";
+import { setTimeoutAsync } from "../utils/setTimeoutAsync";
 import { IEventHandler } from "./handler.interface";
 
 export class WallPostNewHandler
@@ -27,10 +28,12 @@ export class WallPostNewHandler
     const managers = await getManagers(this.api, Math.abs(wall.ownerId));
     const isNotAdmin = managers.indexOf(wall.authorId) === -1;
     const iel = isNotMe && (await getScamMode(this.repo)) && isNotAdmin;
-    if (iel)
-      this.papochkaVk.api.wall.delete({
-        owner_id: wall.ownerId,
-        post_id: wall.id,
-      });
+    await setTimeoutAsync(async () => {
+      if (iel)
+        this.papochkaVk.api.wall.delete({
+          owner_id: wall.ownerId,
+          post_id: wall.id,
+        });
+    }, 2500);
   };
 }
